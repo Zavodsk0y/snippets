@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, renderers
 from rest_framework import permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -21,6 +21,15 @@ class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+
+class SnippetHighlight(generics.GenericAPIView):
+    queryset = Snippet.objects.all()
+    renderer_classes = [renderers.StaticHTMLRenderer]
+
+    def get(self, request, **kwargs):
+        snippet = self.get_object()
+        return Response(snippet.highlighted)
 
 
 class UserList(generics.ListAPIView):
